@@ -62,7 +62,9 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: ${KC_ADMIN_PASS:?Set KC_ADMIN_PASS in .env}
       KC_SMTP_HOST: "${KC_SMTP_HOST:-}"
       KC_SMTP_PORT: "${KC_SMTP_PORT:-587}"
-      KC_SMTP_FROM: "${KC_SMTP_FROM:-}"
+      # Keycloak rejects a realm whose sender is empty, so this placeholder lets it
+      # start without SMTP. With KC_SMTP_HOST empty, Keycloak sends no email.
+      KC_SMTP_FROM: "${KC_SMTP_FROM:-noreply@casepack.localhost}"
       KC_SMTP_FROM_DISPLAY_NAME: "${KC_SMTP_FROM_DISPLAY_NAME:-CasePack}"
       KC_SMTP_AUTH: "${KC_SMTP_AUTH:-true}"
       KC_SMTP_USER: "${KC_SMTP_USER:-}"

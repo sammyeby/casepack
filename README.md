@@ -111,6 +111,8 @@ For production browser uploads, set `S3_PUBLIC_ENDPOINT` to a DNS name users can
 
 Configure Keycloak SMTP before the first startup when deploying CasePack for multiple users. Keycloak uses it to deliver invitations, password-setup links, and password-reset emails.
 
+Without SMTP, leave `KC_SMTP_HOST` empty. CasePack starts and the first administrator signs in with the initial password, but Keycloak can't send email.
+
 Add your SMTP provider settings to `.env`:
 
 ```dotenv

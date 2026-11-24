@@ -140,7 +140,7 @@ services:
 
   # ── CasePack API ───────────────────────────────────────────────
   api:
-    image: ghcr.io/sammyeby/casepack-api:${CASEPACK_API_VERSION:-0.34.1}
+    image: ghcr.io/sammyeby/casepack-api:${CASEPACK_API_VERSION:-0.34.2}
     restart: unless-stopped
     read_only: true
     ports:
@@ -177,7 +177,7 @@ services:
       CASEPACK_LICENSE_REFRESH_INTERVAL: PT24H
       CASEPACK_LICENSE_REQUEST_TIMEOUT: PT15S
       CASEPACK_DEPLOYMENT_PROFILE: compose-podman-single-api
-      CASEPACK_VERSION: ${CASEPACK_API_VERSION:-0.34.1}
+      CASEPACK_VERSION: ${CASEPACK_API_VERSION:-0.34.2}
       CASEPACK_DEPLOYMENT_MODE: ${CASEPACK_DEPLOYMENT_MODE:-self_host}
       CASEPACK_SELF_HOST_BOOTSTRAP_ENABLED: ${CASEPACK_SELF_HOST_BOOTSTRAP_ENABLED:-true}
       CASEPACK_SELF_HOST_BOOTSTRAP_TENANT_NAME: ${CASEPACK_SELF_HOST_BOOTSTRAP_TENANT_NAME:-CasePack Workspace}

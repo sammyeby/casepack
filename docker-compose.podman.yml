@@ -30,6 +30,6 @@ services:
       CASEPACK_OIDC_AUTHORITY: ${OIDC_AUTHORITY:-http://localhost:8081/realms/casepack}
       CASEPACK_OIDC_CLIENT_ID: casepack-spa
       CASEPACK_DEPLOYMENT_MODE: SELF_HOST
-      CASEPACK_LICENSING_PORTAL_URL: ${LICENSING_PORTAL_URL:-https://licensing.bysam.io/portal}
+      CASEPACK_LICENSING_PORTAL_URL: ${LICENSING_PORTAL_URL:-https://licensing.samuelumeh.com/portal}
     ports: !override
       - "${SPA_PORT:-3000}:8080"

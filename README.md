@@ -98,6 +98,7 @@ preview does not claim air-gapped operation.
 | `KC_ADMIN_PASS` | Yes | Keycloak admin password |
 | `CASEPACK_API_VERSION` | No | API image tag (default: `0.34.2`) |
 | `CORS_ORIGINS` | No | Allowed CORS origins (default: `http://localhost:3000`) |
+| `CASEPACK_RATE_LIMIT_GLOBAL` | No | API requests per minute per client IP (default: `1200`; all users behind one NAT or proxy share it) |
 | `OIDC_ISSUER_URI` | No | Override for external Keycloak |
 | `S3_ENDPOINT` | No | Internal S3 endpoint used by the API (default: bundled SeaweedFS) |
 | `S3_PUBLIC_ENDPOINT` | No | Browser-facing S3 endpoint for presigned upload/download URLs |
@@ -111,7 +112,7 @@ For production browser uploads, set `S3_PUBLIC_ENDPOINT` to a DNS name users can
 
 Configure Keycloak SMTP before the first startup when deploying CasePack for multiple users. Keycloak uses it to deliver invitations, password-setup links, and password-reset emails.
 
-Without SMTP, leave `KC_SMTP_HOST` empty. CasePack starts and the first administrator signs in with the initial password, but Keycloak can't send email.
+Without SMTP, leave `KC_SMTP_HOST` empty. CasePack starts and the first administrator signs in with the initial password, but Keycloak can't send email, so CasePack refuses to invite more users until SMTP is configured: an invited user couldn't verify their email.
 
 Add your SMTP provider settings to `.env`:
 
@@ -138,8 +139,8 @@ Connected licensing and bootstrap variables are configured before enrollment:
 | Variable | Description |
 |---|---|
 | `CASEPACK_DEPLOYMENT_MODE` | `self_host` (set by activate.sh) |
-| `CASEPACK_LICENSE_PUBLIC_KEY` | Base64URL-encoded, pinned offline issuer JWK supplied during design-partner onboarding |
-| `LICENSING_API_URL` | Single HTTPS Connected licensing origin |
+| `CASEPACK_LICENSE_PUBLIC_KEY` | Base64URL-encoded, pinned offline issuer JWK. `.env.example` has SamSoft's production key (`k1-prod-initial`, public) |
+| `LICENSING_API_URL` | Single HTTPS Connected licensing origin (default: `https://licensing.samuelumeh.com`) |
 | `CASEPACK_SELF_HOST_BOOTSTRAP_ENABLED` | Enables idempotent first-run customer/tenant/admin bootstrap |
 | `CASEPACK_SELF_HOST_BOOTSTRAP_ADMIN_EMAIL` | First local CasePack admin email |
 | `CASEPACK_SELF_HOST_BOOTSTRAP_ADMIN_INITIAL_PASSWORD` | One-time temporary password; rotate after first login |
@@ -191,7 +192,7 @@ enforcement can therefore lag until that credential expires.
 | Incident Timeline | Categorized chronological response record |
 | Incident Reports | Template-based report preview and generation |
 
-See [bysam.io](https://bysam.io) for licensing plans and pricing.
+See [casepack.app/pricing](https://casepack.app/pricing) for plans and pricing.
 
 ## Standalone Charts (Not Part of the Connected Preview)
 

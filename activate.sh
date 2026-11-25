@@ -58,4 +58,5 @@ fi
 
 printf '%s\n' \
   "Enrollment complete. The durable identity is in the licensing-state volume." \
-  "Next: ${COMPOSE[*]} up -d"
+  "Next: ${COMPOSE[*]} up -d" \
+  "If CasePack is already running, it applies the enrollment within a minute."

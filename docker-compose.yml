@@ -140,7 +140,7 @@ services:
 
   # ── CasePack API ───────────────────────────────────────────────
   api:
-    image: ghcr.io/sammyeby/casepack-api:${CASEPACK_API_VERSION:-0.34.2}
+    image: ghcr.io/sammyeby/casepack-api:${CASEPACK_API_VERSION:-0.35.0}
     restart: unless-stopped
     read_only: true
     ports:
@@ -177,7 +177,7 @@ services:
       CASEPACK_LICENSE_REFRESH_INTERVAL: PT24H
       CASEPACK_LICENSE_REQUEST_TIMEOUT: PT15S
       CASEPACK_DEPLOYMENT_PROFILE: compose-podman-single-api
-      CASEPACK_VERSION: ${CASEPACK_API_VERSION:-0.34.2}
+      CASEPACK_VERSION: ${CASEPACK_API_VERSION:-0.35.0}
       CASEPACK_DEPLOYMENT_MODE: ${CASEPACK_DEPLOYMENT_MODE:-self_host}
       CASEPACK_SELF_HOST_BOOTSTRAP_ENABLED: ${CASEPACK_SELF_HOST_BOOTSTRAP_ENABLED:-true}
       CASEPACK_SELF_HOST_BOOTSTRAP_TENANT_NAME: ${CASEPACK_SELF_HOST_BOOTSTRAP_TENANT_NAME:-CasePack Workspace}
@@ -206,7 +206,7 @@ services:
 
   # ── CasePack SPA ────────────────────────────────────────────────
   spa:
-    image: ghcr.io/sammyeby/casepack-spa:${CASEPACK_SPA_VERSION:-0.34.0}
+    image: ghcr.io/sammyeby/casepack-spa:${CASEPACK_SPA_VERSION:-0.35.0}
     restart: unless-stopped
     ports:
       - "${SPA_PORT:-3000}:8080"

@@ -96,7 +96,7 @@ preview does not claim air-gapped operation.
 | `DB_PASS` | Yes | PostgreSQL password |
 | `KC_DB_PASS` | Yes | Keycloak database password |
 | `KC_ADMIN_PASS` | Yes | Keycloak admin password |
-| `CASEPACK_API_VERSION` | No | API image tag (default: `0.34.2`) |
+| `CASEPACK_API_VERSION` | No | API image tag (default: `0.35.0`) |
 | `CORS_ORIGINS` | No | Allowed CORS origins (default: `http://localhost:3000`) |
 | `CASEPACK_RATE_LIMIT_GLOBAL` | No | API requests per minute per client IP (default: `1200`; all users behind one NAT or proxy share it) |
 | `OIDC_ISSUER_URI` | No | Override for external Keycloak |

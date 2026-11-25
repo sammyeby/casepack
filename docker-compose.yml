@@ -170,10 +170,10 @@ services:
       CASEPACK_CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
       GOTENBERG_URL: ${GOTENBERG_URL:-http://gotenberg:3000}
       CASEPACK_CONNECTED_LICENSING_ENABLED: "true"
-      CASEPACK_LICENSING_BASE_URL: ${LICENSING_API_URL:-https://licensing.bysam.io}
+      CASEPACK_LICENSING_BASE_URL: ${LICENSING_API_URL:-https://licensing.samuelumeh.com}
       CASEPACK_LICENSE_STATE_DIR: /var/lib/casepack/licensing
       CASEPACK_LICENSE_KEY_SOURCE: env
-      CASEPACK_LICENSE_PUBLIC_KEY: ${CASEPACK_LICENSE_PUBLIC_KEY:?Set the Base64URL-encoded offline issuer JWK in .env}
+      CASEPACK_LICENSE_PUBLIC_KEY: ${CASEPACK_LICENSE_PUBLIC_KEY:?Set CASEPACK_LICENSE_PUBLIC_KEY in .env (copy it from .env.example)}
       CASEPACK_LICENSE_REFRESH_INTERVAL: PT24H
       CASEPACK_LICENSE_REQUEST_TIMEOUT: PT15S
       CASEPACK_DEPLOYMENT_PROFILE: compose-podman-single-api
@@ -190,6 +190,7 @@ services:
       CASEPACK_KEYCLOAK_SA_CLIENT_ID: ${CASEPACK_KEYCLOAK_SA_CLIENT_ID:-casepack-user-manager}
       CASEPACK_KEYCLOAK_SA_CLIENT_SECRET: ${CASEPACK_KEYCLOAK_SA_CLIENT_SECRET:-casepack-user-manager-secret}
       MANAGEMENT_HEALTH_MAIL_ENABLED: "false"
+      CASEPACK_RATE_LIMIT_GLOBAL: ${CASEPACK_RATE_LIMIT_GLOBAL:-1200}
       JAVA_OPTS: "${JAVA_OPTS:--Xms256m -Xmx512m}"
     volumes:
       - licensing-state:/var/lib/casepack/licensing
@@ -220,7 +221,7 @@ services:
       CASEPACK_OIDC_AUTHORITY: ${OIDC_AUTHORITY:-http://localhost:8081/realms/casepack}
       CASEPACK_OIDC_CLIENT_ID: casepack-spa
       CASEPACK_DEPLOYMENT_MODE: SELF_HOST
-      CASEPACK_LICENSING_PORTAL_URL: ${LICENSING_PORTAL_URL:-https://licensing.bysam.io/portal}
+      CASEPACK_LICENSING_PORTAL_URL: ${LICENSING_PORTAL_URL:-https://licensing.samuelumeh.com/portal}
     depends_on:
       api:
         condition: service_started

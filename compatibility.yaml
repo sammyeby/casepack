@@ -1,10 +1,23 @@
 schemaVersion: 1
-status: preview-unverified
+status: preview
 profile: compose-podman-single-api
 releases:
-  casepackApi: 0.31.0
-  casepackSpa: 0.29.0
+  casepackApi: 0.35.1
+  casepackSpa: 0.35.0
   connectedProtocol: v1
+# The images the self-host QA ran (casepack-selfhost, QA runs 4 and 5, 2026-11-25/26),
+# with casepack#29 (per-install secrets, SeaweedFS 4.53) and casepack#30 (API 0.35.1).
+images:
+  - ghcr.io/sammyeby/casepack-api:0.35.1
+  - ghcr.io/sammyeby/casepack-spa:0.35.0
+  - ghcr.io/sammyeby/keycloak:26.7.0-optimized
+  - ghcr.io/sammyeby/keycloak-themes:0.5.0
+  - ghcr.io/sammyeby/postgresql:17.7-alpine
+  - chrislusf/seaweedfs:4.53
+  - gotenberg/gotenberg:8-chromium
+  - docker.io/curlimages/curl:8.16.0
+licensing:
+  testedAgainst: staging (licensing 0.35.0)
 constraints:
   apiReplicas: 1
   deploymentSlots:
@@ -12,9 +25,15 @@ constraints:
     - RECOVERY_TEST
   stateOwner: casepack-api
   statePath: /var/lib/casepack/licensing
+  smtpRequiredForInvitations: true
 verification:
-  cleanInstall: pending
-  redeployIdentityPersistence: pending
+  cleanInstall: passed-2026-11-26
+  enrollmentWhileRunning: passed-2026-11-26
+  customerJourney: passed-2026-11-26
+  credentialRenewal: passed-2026-11-26
+  upgradeIdentityPersistence: passed-2026-11-26 # 0.35.0 -> 0.35.1
+  secretRotation: passed-2026-11-26
+  ownDomainWithTls: pending
   backupRestoreReconciliation: pending
   rollback: pending
   imageDigests: pending-release-build

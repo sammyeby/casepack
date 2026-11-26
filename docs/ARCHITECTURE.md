@@ -47,16 +47,16 @@ rollback have not completed a partner canary. Do not offer it as supported.
 |---|---|---|---|
 | CasePack API | `ghcr.io/sammyeby/casepack-api` | `oci://ghcr.io/sammyeby/charts/casepack-api` | `0.3.x` |
 | CasePack SPA | `ghcr.io/sammyeby/casepack-spa` | `sammyeby/casepack-spa` | `0.1.x` |
-| Keycloak | `ghcr.io/sammyeby/keycloak:26.7.0-optimized` | `oci://ghcr.io/sammyeby/charts/keycloak` | `1.2.x` |
+| Keycloak | `ghcr.io/sammyeby/keycloak:26.8.2-optimized` | `oci://ghcr.io/sammyeby/charts/keycloak` | `1.2.x` |
 | SeaweedFS | `chrislusf/seaweedfs` | `oci://ghcr.io/sammyeby/charts/seaweedfs` | `1.0.x` |
-| PostgreSQL | `ghcr.io/sammyeby/postgresql:17.7-alpine` | `oci://ghcr.io/sammyeby/charts/postgresql` | `2.0.x` |
+| PostgreSQL | `ghcr.io/sammyeby/postgresql:17.12-alpine` | `oci://ghcr.io/sammyeby/charts/postgresql` | `2.0.x` |
 
 ### SamSoft Keycloak Image
 
-`ghcr.io/sammyeby/keycloak:26.7.0-optimized` is a custom build of Keycloak 26.5.2. The `--import-realm` flag imports `casepack-realm.json` on first start, configuring:
+`ghcr.io/sammyeby/keycloak:26.8.2-optimized` is SamSoft's build of Keycloak 26.8.2 ([sammyeby/images](https://github.com/sammyeby/images)). The `--import-realm` flag imports `casepack-realm.json` on first start, configuring:
 
-- `casepack` realm
-- `casepack-spa` public client (authorization code + PKCE)
+- `casepack` realm, which requires HTTPS for non-private client addresses (`sslRequired: external`)
+- `casepack-spa` public client (authorization code, PKCE S256 required, redirect URIs on `http://localhost:3000` only)
 - `user` realm role
 - `casepack-user-manager` service-account client for API-managed user creation
 - `tenant_id` protocol mapper (custom JWT claim)
@@ -89,6 +89,7 @@ Services communicate via Docker Compose service names:
 |---|---|---|
 | PostgreSQL | `postgres` | `5432` |
 | Keycloak | `keycloak` | `8080` |
+| Keycloak edge (public sign-in) | `keycloak-edge` | `8080` |
 | SeaweedFS | `seaweedfs` | `8333` |
 | CasePack API | `api` | `8080` |
 | CasePack SPA | `spa` | `8080` |
@@ -113,7 +114,7 @@ CasePack API is a Spring Boot OAuth2 resource server. It validates JWTs issued b
 
 In Docker Compose, the browser and the API reach Keycloak on different hostnames:
 
-- **Browser** → `http://localhost:8081/realms/casepack` (host-mapped port)
+- **Browser** → `http://localhost:8081/realms/casepack` (host-mapped port of `keycloak-edge`, which passes only `/realms/casepack/` and `/resources/` to Keycloak; the admin console is on `127.0.0.1:8082`)
 - **API (internal)** → `http://keycloak:8080/realms/casepack` (Docker DNS)
 
 The JWT `iss` claim matches the **browser-facing** URL. The API must:
@@ -189,7 +190,7 @@ See the [Deployment Guide](../README.md) for setup instructions.
 ### Quick Checklist
 
 - [ ] **Strong passwords** — Replace all default credentials
-- [ ] **TLS everywhere** — Enable Ingress TLS with cert-manager
+- [ ] **TLS everywhere** — Enable Ingress TLS with cert-manager. The Compose bundle is plain HTTP: run it only on a trusted network until TLS is supported
 - [ ] **CORS lockdown** — Set `corsOrigins` to your exact domain(s)
 - [ ] **Resource limits** — Tune CPU/memory requests and limits
 - [ ] **Persistence** — Ensure PVCs use durable StorageClasses with backups

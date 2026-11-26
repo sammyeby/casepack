@@ -1,5 +1,5 @@
-# CasePack — engineering-preview self-host Docker Compose stack.
-# Public operator commands remain gated on the signed compatibility canary.
+# CasePack — self-host Docker Compose stack (design-partner preview).
+# Install steps: https://docs.casepack.app/self-host-runbook/
 #
 # Default URLs:
 #   API:      http://localhost:8080

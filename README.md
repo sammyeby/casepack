@@ -49,20 +49,17 @@ CasePack is a multi-tenant incident management, documentation and evidence platf
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-## Self-Host Preview Publication Gate
+## Install
 
-The Compose/Podman wrapper, API-owned state volume, and Connected enrollment
-scripts are implemented here for engineering verification. Public installation
-commands are intentionally withheld until clean install, upgrade, rollback,
-restore, state-loss, and licensing-outage canaries pass against a signed
-compatibility set.
+Follow the [Self-Host Runbook](https://docs.casepack.app/self-host-runbook/): configuration, start-up,
+enrollment, first sign-in, renewal and upgrades, step by step. This is a
+design-partner preview: Docker Engine 24+ with Compose v2 or Podman Compose,
+one API replica, one short-lived enrollment code per deployment slot, and
+durable encrypted backups. The runbook lists what isn't validated yet, such as
+your own domain with TLS, restore and rollback.
 
-Accepted design partners receive the pinned operator runbook during onboarding.
-It requires Docker Engine 24+ with Compose v2 or a compatible Podman Compose
-setup, one short-lived enrollment code for the assigned deployment slot, and
-durable encrypted backups. Enrollment reads the code from a protected prompt
-or owner-readable file; it is never accepted as a command-line value or stored
-in `.env`.
+Enrollment reads the code from a protected prompt or owner-readable file; it is
+never accepted as a command-line value or stored in `.env`.
 
 The API image creates and exclusively owns the durable installation ID,
 Ed25519 key, state checksum, and current credential in the `licensing-state`
@@ -79,8 +76,8 @@ canary passes. Existing charts are not a promise of Connected-pilot support.
 ## License Renewal
 
 Connected deployments refresh their key-bound credential every 24 hours with
-per-deployment jitter. The private, pinned operator runbook includes explicit
-refresh and diagnostic procedures.
+per-deployment jitter. The [runbook](https://docs.casepack.app/self-host-runbook/#7-check-status-and-renewal)
+shows how to check the status and renew immediately.
 
 The API signs a fresh proof with its non-exported deployment key, strictly
 verifies the returned EdDSA credential against the offline issuer trust set,
@@ -215,6 +212,7 @@ supportability gate.
 | Resource | Link |
 |---|---|
 | Official Documentation | [CasePack Docs](https://docs.casepack.app) |
+| Self-Host Runbook | [docs.casepack.app/self-host-runbook](https://docs.casepack.app/self-host-runbook/) |
 | Deployment Architecture | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
 | Helm Chart Reference | [casepack chart README](https://github.com/sammyeby/charts/tree/main/casepack#readme) |
 | SamSoft Charts | [sammyeby/charts](https://github.com/sammyeby/charts) |

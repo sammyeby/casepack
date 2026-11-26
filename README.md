@@ -58,6 +58,17 @@ one API replica, one short-lived enrollment code per deployment slot, and
 durable encrypted backups. The runbook lists what isn't validated yet, such as
 your own domain with TLS, restore and rollback.
 
+**Plain HTTP for now.** Run the bundle only on a network you trust until TLS is
+supported. Keycloak refuses HTTP sign-in from public client addresses
+(`sslRequired: external`).
+
+**What's reachable from the network:** the SPA (`3000`), the API (`8080`), the
+S3 gateway for evidence uploads (`8333`), and sign-in on `8081`, where
+`keycloak-edge` passes only the `casepack` realm. PostgreSQL isn't published.
+The Keycloak admin console listens on `127.0.0.1:8082` only. From another
+machine, use an SSH tunnel: `ssh -L 8082:localhost:8082 <server>`, then open
+`http://localhost:8082/admin/`.
+
 Enrollment reads the code from a protected prompt or owner-readable file; it is
 never accepted as a command-line value or stored in `.env`.
 
@@ -93,6 +104,7 @@ preview does not claim air-gapped operation.
 | `DB_PASS` | Yes | PostgreSQL password |
 | `KC_DB_PASS` | Yes | Keycloak database password |
 | `KC_ADMIN_PASS` | Yes | Keycloak admin password |
+| `KEYCLOAK_ADMIN_PORT` / `KEYCLOAK_ADMIN_URL` | No | Admin console port on `127.0.0.1` and its URL (default: `8082`, `http://localhost:8082`) |
 | `CASEPACK_API_VERSION` | No | API image tag (default: `0.35.1`) |
 | `CORS_ORIGINS` | No | Allowed CORS origins (default: `http://localhost:3000`) |
 | `CASEPACK_RATE_LIMIT_GLOBAL` | No | API requests per minute per client IP (default: `1200`; all users behind one NAT or proxy share it) |
@@ -130,7 +142,7 @@ Keep the real SMTP password only in `.env` and do not commit that file to source
 
 Port `587` with STARTTLS is the common configuration. For providers that require implicit TLS on port `465`, set `KC_SMTP_PORT=465`, `KC_SMTP_STARTTLS=false`, and `KC_SMTP_SSL=true`. For an unauthenticated private relay, set `KC_SMTP_AUTH=false` and leave the username and password blank. Do not enable STARTTLS and SSL at the same time.
 
-These values are applied when the `casepack` realm is imported on its first startup. For an existing installation, open the Keycloak Admin Console, select the **casepack** realm, go to **Realm settings → Email**, enter the same values, and use **Test connection**. See the [Keycloak email configuration guide](https://www.keycloak.org/docs/latest/server_admin/#configuring-email-for-a-realm) for provider-specific options.
+These values are applied when the `casepack` realm is imported on its first startup. For an existing installation, open the Keycloak Admin Console (`http://localhost:8082/admin/`, through an SSH tunnel from another machine), select the **casepack** realm, go to **Realm settings → Email**, enter the same values, and use **Test connection**. See the [Keycloak email configuration guide](https://www.keycloak.org/docs/latest/server_admin/#configuring-email-for-a-realm) for provider-specific options.
 
 Connected licensing and bootstrap variables are configured before enrollment:
 

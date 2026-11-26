@@ -56,6 +56,8 @@ services:
       KC_DB_USERNAME: ${KC_DB_USER:-keycloak}
       KC_DB_PASSWORD: ${KC_DB_PASS:?Set KC_DB_PASS in .env}
       KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:-http://localhost:8081}
+      # The realm import sets the casepack-user-manager client's secret from this (first start only).
+      CASEPACK_KEYCLOAK_SA_CLIENT_SECRET: ${CASEPACK_KEYCLOAK_SA_CLIENT_SECRET:?Set CASEPACK_KEYCLOAK_SA_CLIENT_SECRET in .env (generate it; see .env.example)}
       KC_HTTP_ENABLED: "true"
       KC_PROXY_HEADERS: "xforwarded"
       KEYCLOAK_ADMIN: ${KC_ADMIN_USER:-admin}
@@ -98,14 +100,14 @@ services:
 
   # ── SeaweedFS (S3-compatible storage) ────────────────────────────
   seaweedfs:
-    image: chrislusf/seaweedfs:latest
+    image: chrislusf/seaweedfs:4.53
     command: "server -s3 -s3.port=8333 -dir=/data -volume.max=0"
     restart: unless-stopped
     ports:
       - "${S3_PORT:-8333}:8333"
     environment:
-      AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY:-admin}
-      AWS_SECRET_ACCESS_KEY: ${S3_SECRET_KEY:-admin123456}
+      AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY:?Set S3_ACCESS_KEY in .env (generate it; see .env.example)}
+      AWS_SECRET_ACCESS_KEY: ${S3_SECRET_KEY:?Set S3_SECRET_KEY in .env (generate it; see .env.example)}
     volumes:
       - seaweeddata:/data
     security_opt:
@@ -162,8 +164,8 @@ services:
       S3_ENDPOINT: ${S3_ENDPOINT:-http://seaweedfs:8333}
       S3_PUBLIC_ENDPOINT: ${S3_PUBLIC_ENDPOINT:-}
       S3_REGION: ${S3_REGION:-us-east-1}
-      S3_ACCESS_KEY: ${S3_ACCESS_KEY:-admin}
-      S3_SECRET_KEY: ${S3_SECRET_KEY:-admin123456}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:?Set S3_ACCESS_KEY in .env (generate it; see .env.example)}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:?Set S3_SECRET_KEY in .env (generate it; see .env.example)}
       S3_BUCKET: ${S3_BUCKET:-casepack}
       S3_PATH_STYLE: "true"
       S3_AUTO_CREATE_BUCKET: "true"
@@ -188,7 +190,7 @@ services:
       CASEPACK_KEYCLOAK_SPA_CLIENT_ID: ${CASEPACK_KEYCLOAK_SPA_CLIENT_ID:-casepack-spa}
       CASEPACK_KEYCLOAK_SPA_REDIRECT_URI: ${CASEPACK_KEYCLOAK_SPA_REDIRECT_URI:-http://localhost:3000/auth/callback}
       CASEPACK_KEYCLOAK_SA_CLIENT_ID: ${CASEPACK_KEYCLOAK_SA_CLIENT_ID:-casepack-user-manager}
-      CASEPACK_KEYCLOAK_SA_CLIENT_SECRET: ${CASEPACK_KEYCLOAK_SA_CLIENT_SECRET:-casepack-user-manager-secret}
+      CASEPACK_KEYCLOAK_SA_CLIENT_SECRET: ${CASEPACK_KEYCLOAK_SA_CLIENT_SECRET:?Set CASEPACK_KEYCLOAK_SA_CLIENT_SECRET in .env (generate it; see .env.example)}
       MANAGEMENT_HEALTH_MAIL_ENABLED: "false"
       CASEPACK_RATE_LIMIT_GLOBAL: ${CASEPACK_RATE_LIMIT_GLOBAL:-1200}
       JAVA_OPTS: "${JAVA_OPTS:--Xms256m -Xmx512m}"

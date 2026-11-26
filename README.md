@@ -103,8 +103,17 @@ preview does not claim air-gapped operation.
 | `S3_ENDPOINT` | No | Internal S3 endpoint used by the API (default: bundled SeaweedFS) |
 | `S3_PUBLIC_ENDPOINT` | No | Browser-facing S3 endpoint for presigned upload/download URLs |
 | `GOTENBERG_URL` | No | Internal Gotenberg URL used by the API for PDF report rendering |
-| `S3_ACCESS_KEY` | No | S3 credentials |
-| `S3_SECRET_KEY` | No | S3 credentials |
+| `S3_ACCESS_KEY` | Yes | S3 access key; generate one per install (`openssl rand -hex 16`) |
+| `S3_SECRET_KEY` | Yes | S3 secret key; generate one per install (`openssl rand -hex 32`) |
+| `CASEPACK_KEYCLOAK_SA_CLIENT_SECRET` | Yes | Secret of the Keycloak service account that creates the first admin and invites users; generate one per install (`openssl rand -hex 32`) |
+
+### Installs created before these secrets were required
+
+Until bundle `main` of 2026-11-26, `.env.example` shipped the same S3 keys (`admin` / `admin123456`) and the same Keycloak service-account secret (`casepack-user-manager-secret`) to every install, and the realm file set that secret. Anyone who knows them and can reach the S3 port or Keycloak could read evidence or manage users. Replace them on an existing install:
+
+1. In `.env`, set `S3_ACCESS_KEY`, `S3_SECRET_KEY` and `CASEPACK_KEYCLOAK_SA_CLIENT_SECRET` to newly generated values.
+2. In the Keycloak admin console (realm `casepack` → Clients → `casepack-user-manager` → Credentials), set the client secret to the new `CASEPACK_KEYCLOAK_SA_CLIENT_SECRET`. The realm file is imported only on Keycloak's first start, so `.env` alone doesn't change it.
+3. Run `docker compose up -d`. SeaweedFS and the API restart with the new S3 keys; stored evidence stays readable.
 
 For production browser uploads, set `S3_PUBLIC_ENDPOINT` to a DNS name users can reach, for example `https://s3.casepack.example.com`. Leave `S3_ENDPOINT` pointed at the internal object-storage service when the API should use private networking.
 

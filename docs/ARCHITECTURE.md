@@ -25,9 +25,9 @@ profile:
 ### 1. Docker Compose — Current Preview
 
 The Docker Compose stack is the deployment reference for non-Kubernetes
-environments. Installation, enrollment, and recovery commands remain in the
-private design-partner runbook until the restore/upgrade canary and release
-approval are complete.
+environments. Installation, enrollment, renewal and upgrade commands are in the
+[Self-Host Runbook](https://docs.casepack.app/self-host-runbook/); restore, rollback and other recovery procedures aren't
+validated yet, so design partners go through them with us.
 
 **When to use:** Private design-partner preview on a single customer-operated
 host. One API replica is enforced by support scope.
@@ -195,8 +195,8 @@ See the [Deployment Guide](../README.md) for setup instructions.
 - [ ] **Persistence** — Ensure PVCs use durable StorageClasses with backups
 - [ ] **Network policies** — Restrict inter-pod communication
 - [ ] **Container hardening** — `read_only`, `no-new-privileges` (default in compose)
-- [ ] **Deployment enrolled** — Follow the pinned private runbook before first
-      start and keep the `licensing-state` volume durable
+- [ ] **Deployment enrolled** — Follow the [Self-Host Runbook](https://docs.casepack.app/self-host-runbook/) and keep
+      the `licensing-state` volume durable
 - [ ] **Monitoring** — Health checks, disk alerts, license expiry notifications
 
 ---
@@ -233,8 +233,9 @@ Connected local-state failure follows a data-custody floor:
 
 ### Renewal
 
-The API refreshes about every 24 hours with jitter. The pinned private runbook
-provides the immediate-refresh procedure through the same API image command mode.
+The API refreshes about every 24 hours with jitter. The
+[runbook](https://docs.casepack.app/self-host-runbook/#7-check-status-and-renewal) shows the immediate refresh through the
+same API image command mode.
 Refresh changes only the internal credential revision/head; it never creates a
 second entitlement, installation, or customer-visible license.
 

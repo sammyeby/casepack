@@ -95,7 +95,10 @@ services:
   # Public sign-in entry point. Passes only the casepack realm and the theme resources
   # to Keycloak; the admin console and the master realm stay on the loopback admin port.
   keycloak-edge:
-    image: docker.io/nginxinc/nginx-unprivileged:1.30.6-alpine
+    # The official image, run as its nginx user (uid 101). nginxinc/nginx-unprivileged
+    # stopped publishing at 1.30.6, which has critical CVEs fixed in 1.30.7.
+    image: docker.io/library/nginx:1.30.8-alpine
+    user: "101:101"
     restart: unless-stopped
     read_only: true
     ports:
@@ -106,8 +109,10 @@ services:
       - ./keycloak/edge-nginx.conf.template:/etc/nginx/templates/default.conf.template:ro
     tmpfs:
       - /tmp
-      # The entrypoint renders the template here as nginx (uid 101).
+      # Writable as uid 101: the rendered template, the pid file and nginx's temp files.
       - /etc/nginx/conf.d:mode=1777
+      - /run:mode=1777
+      - /var/cache/nginx:mode=1777
     security_opt:
       - no-new-privileges:true
     depends_on:
@@ -118,7 +123,7 @@ services:
   # The optimized Keycloak image is distroless, so it has no shell/curl for
   # an in-container healthcheck. Use a tiny waiter to gate API bootstrap.
   keycloak-ready:
-    image: docker.io/curlimages/curl:8.16.0
+    image: docker.io/curlimages/curl:8.23.0
     restart: "no"
     entrypoint:
       - /bin/sh
@@ -131,7 +136,7 @@ services:
 
   # ── SeaweedFS (S3-compatible storage) ────────────────────────────
   seaweedfs:
-    image: chrislusf/seaweedfs:4.53
+    image: chrislusf/seaweedfs:4.55
     command: "server -s3 -s3.port=8333 -dir=/data -volume.max=0"
     restart: unless-stopped
     ports:

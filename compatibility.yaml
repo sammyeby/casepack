@@ -6,17 +6,20 @@ releases:
   casepackSpa: 0.35.0
   connectedProtocol: v1
 # The images this bundle runs. Keycloak 26.8.2 and PostgreSQL 17.12 are sammyeby/images
-# 5295aa7 (Trivy: 0 critical); keycloak-edge is the public sign-in entry point.
+# 5295aa7; keycloak-edge (official nginx, run as uid 101) is the public sign-in entry point.
+# Trivy, 2026-11-27 (HIGH and CRITICAL): 0 critical in every image except gotenberg
+# (Chromium; no fixed release yet; internal only). Keycloak has 8 high in Debian 13
+# libexpat and libuuid with no fix released.
 images:
   - ghcr.io/sammyeby/casepack-api:0.35.1
   - ghcr.io/sammyeby/casepack-spa:0.35.0
   - ghcr.io/sammyeby/keycloak:26.8.2-optimized
   - ghcr.io/sammyeby/keycloak-themes:0.5.0
   - ghcr.io/sammyeby/postgresql:17.12-alpine
-  - docker.io/nginxinc/nginx-unprivileged:1.30.6-alpine
-  - chrislusf/seaweedfs:4.53
+  - docker.io/library/nginx:1.30.8-alpine
+  - chrislusf/seaweedfs:4.55
   - gotenberg/gotenberg:8-chromium
-  - docker.io/curlimages/curl:8.16.0
+  - docker.io/curlimages/curl:8.23.0
 licensing:
   testedAgainst: staging (licensing 0.35.0)
 constraints:

@@ -1,21 +1,24 @@
 # CasePack — self-host Docker Compose stack (design-partner preview).
 # Install steps: https://docs.casepack.app/self-host-runbook/
 #
+# Plain HTTP: run it only on a network you trust until TLS is supported.
+#
 # Default URLs:
 #   API:      http://localhost:8080
 #   SPA:      http://localhost:3000
-#   Keycloak: http://localhost:8081
+#   Sign-in:  http://localhost:8081 (keycloak-edge: only the casepack realm)
+#   Keycloak admin console: http://localhost:8082/admin/ (this machine only)
 #   SeaweedFS: http://localhost:8333 (S3 gateway)
-#   Gotenberg: internal only (PDF renderer; not published to host)
+#   PostgreSQL, Gotenberg: internal only (not published to the host)
 
 services:
 
   # ── PostgreSQL ──────────────────────────────────────────────────
   postgres:
-    image: ghcr.io/sammyeby/postgresql:17.7-alpine
+    image: ghcr.io/sammyeby/postgresql:17.12-alpine
     restart: unless-stopped
-    ports:
-      - "${DB_PORT:-5432}:5432"
+    # Not published: only the API and Keycloak use it, over the Compose network.
+    # For psql or pg_dump, use `docker compose exec postgres ...`.
     environment:
       POSTGRES_DB: ${DB_NAME:-casepack}
       POSTGRES_USER: ${DB_USER:-casepack}
@@ -24,7 +27,8 @@ services:
       KC_DB_USER: ${KC_DB_USER:-keycloak}
       KC_DB_PASS: ${KC_DB_PASS:?Set KC_DB_PASS in .env}
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      # The image keeps its cluster at PGDATA=/var/lib/postgresql/pgdata.
+      - pgdata:/var/lib/postgresql/pgdata
       - ./keycloak/init-keycloak-db.sh:/docker-entrypoint-initdb.d/init-keycloak-db.sh:ro
     security_opt:
       - no-new-privileges:true
@@ -45,23 +49,27 @@ services:
       - no-new-privileges:true
 
   keycloak:
-    image: ghcr.io/sammyeby/keycloak:26.7.0-optimized
+    image: ghcr.io/sammyeby/keycloak:26.8.2-optimized
     command: start --optimized --import-realm --http-port=8080
     restart: unless-stopped
     ports:
-      - "${KEYCLOAK_PORT:-8081}:8080"
+      # The admin console and the master realm: this machine only. From elsewhere,
+      # use an SSH tunnel. Browsers sign in through keycloak-edge on KEYCLOAK_PORT.
+      - "127.0.0.1:${KEYCLOAK_ADMIN_PORT:-8082}:8080"
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/${KC_DB_NAME:-keycloak}
       KC_DB_USERNAME: ${KC_DB_USER:-keycloak}
       KC_DB_PASSWORD: ${KC_DB_PASS:?Set KC_DB_PASS in .env}
       KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:-http://localhost:8081}
+      KC_HOSTNAME_ADMIN: ${KEYCLOAK_ADMIN_URL:-http://localhost:8082}
       # The realm import sets the casepack-user-manager client's secret from this (first start only).
       CASEPACK_KEYCLOAK_SA_CLIENT_SECRET: ${CASEPACK_KEYCLOAK_SA_CLIENT_SECRET:?Set CASEPACK_KEYCLOAK_SA_CLIENT_SECRET in .env (generate it; see .env.example)}
       KC_HTTP_ENABLED: "true"
+      # keycloak-edge sets X-Forwarded-For to the address it sees, replacing any the client sent.
       KC_PROXY_HEADERS: "xforwarded"
-      KEYCLOAK_ADMIN: ${KC_ADMIN_USER:-admin}
-      KEYCLOAK_ADMIN_PASSWORD: ${KC_ADMIN_PASS:?Set KC_ADMIN_PASS in .env}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_ADMIN_USER:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_ADMIN_PASS:?Set KC_ADMIN_PASS in .env}
       KC_SMTP_HOST: "${KC_SMTP_HOST:-}"
       KC_SMTP_PORT: "${KC_SMTP_PORT:-587}"
       # Keycloak rejects a realm whose sender is empty, so this placeholder lets it
@@ -83,6 +91,25 @@ services:
         condition: service_healthy
       keycloak-theme:
         condition: service_completed_successfully
+
+  # Public sign-in entry point. Passes only the casepack realm and the theme resources
+  # to Keycloak; the admin console and the master realm stay on the loopback admin port.
+  keycloak-edge:
+    image: docker.io/nginxinc/nginx-unprivileged:1.30.6-alpine
+    restart: unless-stopped
+    read_only: true
+    ports:
+      - "${KEYCLOAK_PORT:-8081}:8080"
+    volumes:
+      - ./keycloak/edge-nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      keycloak:
+        condition: service_started
+        restart: true
 
   # The optimized Keycloak image is distroless, so it has no shell/curl for
   # an in-container healthcheck. Use a tiny waiter to gate API bootstrap.
@@ -171,6 +198,8 @@ services:
       S3_AUTO_CREATE_BUCKET: "true"
       CASEPACK_CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
       GOTENBERG_URL: ${GOTENBERG_URL:-http://gotenberg:3000}
+      # Clients connect directly, so X-Forwarded-For is client-supplied: don't trust it.
+      FORWARD_HEADERS_STRATEGY: ${FORWARD_HEADERS_STRATEGY:-none}
       CASEPACK_CONNECTED_LICENSING_ENABLED: "true"
       CASEPACK_LICENSING_BASE_URL: ${LICENSING_API_URL:-https://licensing.samuelumeh.com}
       CASEPACK_LICENSE_STATE_DIR: /var/lib/casepack/licensing

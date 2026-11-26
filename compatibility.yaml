@@ -5,14 +5,15 @@ releases:
   casepackApi: 0.35.1
   casepackSpa: 0.35.0
   connectedProtocol: v1
-# The images the self-host QA ran (casepack-selfhost, QA runs 4 and 5, 2026-11-25/26),
-# with casepack#29 (per-install secrets, SeaweedFS 4.53) and casepack#30 (API 0.35.1).
+# The images this bundle runs. Keycloak 26.8.2 and PostgreSQL 17.12 are sammyeby/images
+# 5295aa7 (Trivy: 0 critical); keycloak-edge is the public sign-in entry point.
 images:
   - ghcr.io/sammyeby/casepack-api:0.35.1
   - ghcr.io/sammyeby/casepack-spa:0.35.0
-  - ghcr.io/sammyeby/keycloak:26.7.0-optimized
+  - ghcr.io/sammyeby/keycloak:26.8.2-optimized
   - ghcr.io/sammyeby/keycloak-themes:0.5.0
-  - ghcr.io/sammyeby/postgresql:17.7-alpine
+  - ghcr.io/sammyeby/postgresql:17.12-alpine
+  - docker.io/nginxinc/nginx-unprivileged:1.30.6-alpine
   - chrislusf/seaweedfs:4.53
   - gotenberg/gotenberg:8-chromium
   - docker.io/curlimages/curl:8.16.0
@@ -27,12 +28,15 @@ constraints:
   statePath: /var/lib/casepack/licensing
   smtpRequiredForInvitations: true
 verification:
-  cleanInstall: passed-2026-11-26
-  enrollmentWhileRunning: passed-2026-11-26
-  customerJourney: passed-2026-11-26
-  credentialRenewal: passed-2026-11-26
-  upgradeIdentityPersistence: passed-2026-11-26 # 0.35.0 -> 0.35.1
-  secretRotation: passed-2026-11-26
+  # Security fixes of 2026-11-26 (new Keycloak and PostgreSQL, keycloak-edge, no DB port):
+  # every item reruns on this set before it is marked passed.
+  cleanInstall: pending
+  enrollmentWhileRunning: pending
+  customerJourney: pending
+  credentialRenewal: pending
+  upgradeIdentityPersistence: pending
+  secretRotation: pending
+  downUpKeepsData: pending
   ownDomainWithTls: pending
   backupRestoreReconciliation: pending
   rollback: pending

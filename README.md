@@ -103,8 +103,9 @@ preview does not claim air-gapped operation.
 | `S3_ENDPOINT` | No | Internal S3 endpoint used by the API (default: bundled SeaweedFS) |
 | `S3_PUBLIC_ENDPOINT` | No | Browser-facing S3 endpoint for presigned upload/download URLs |
 | `GOTENBERG_URL` | No | Internal Gotenberg URL used by the API for PDF report rendering |
-| `S3_ACCESS_KEY` | No | S3 credentials |
-| `S3_SECRET_KEY` | No | S3 credentials |
+| `S3_ACCESS_KEY` | Yes | S3 access key; generate one per install (`openssl rand -hex 16`) |
+| `S3_SECRET_KEY` | Yes | S3 secret key; generate one per install (`openssl rand -hex 32`) |
+| `CASEPACK_KEYCLOAK_SA_CLIENT_SECRET` | Yes | Secret of the Keycloak service account that creates the first admin and invites users; generate one per install (`openssl rand -hex 32`) |
 
 For production browser uploads, set `S3_PUBLIC_ENDPOINT` to a DNS name users can reach, for example `https://s3.casepack.example.com`. Leave `S3_ENDPOINT` pointed at the internal object-storage service when the API should use private networking.
 

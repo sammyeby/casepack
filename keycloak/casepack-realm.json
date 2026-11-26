@@ -172,7 +172,7 @@
       "standardFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "casepack-user-manager-secret",
+      "secret": "${CASEPACK_KEYCLOAK_SA_CLIENT_SECRET}",
       "protocol": "openid-connect"
     }
   ],

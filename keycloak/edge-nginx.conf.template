@@ -4,10 +4,17 @@
 # exposed-path recommendations (https://www.keycloak.org/server/reverseproxy):
 # the casepack realm and the theme resources. The admin console, the admin API
 # and the master realm answer 404 here; they are on Keycloak's loopback admin port.
+#
+# A template: the image's entrypoint fills in NGINX_LOCAL_RESOLVERS from the container's
+# /etc/resolv.conf. Resolving keycloak per request (not once at start) keeps the edge
+# working after Keycloak's container is recreated with a new address.
 server {
     listen 8080;
     server_tokens off;
     client_max_body_size 1m;
+
+    resolver ${NGINX_LOCAL_RESOLVERS} valid=10s ipv6=off;
+    set $keycloak_upstream http://keycloak:8080;
 
     # Keycloak's sign-in responses carry large cookies.
     proxy_buffer_size 16k;
@@ -19,11 +26,11 @@ server {
     proxy_set_header X-Forwarded-Proto $scheme;
 
     location /realms/casepack/ {
-        proxy_pass http://keycloak:8080;
+        proxy_pass $keycloak_upstream;
     }
 
     location /resources/ {
-        proxy_pass http://keycloak:8080;
+        proxy_pass $keycloak_upstream;
     }
 
     location / {

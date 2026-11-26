@@ -29,14 +29,16 @@ constraints:
   smtpRequiredForInvitations: true
 verification:
   # Security fixes of 2026-11-26 (new Keycloak and PostgreSQL, keycloak-edge, no DB port):
-  # every item reruns on this set before it is marked passed.
+  # every item reruns on this set before it is marked passed. QA run 4 (enrolled, bundle
+  # 6dc40c9) passed the journey, down/up and renewal; the rest rerun in the final QA of
+  # the next API release.
   cleanInstall: pending
   enrollmentWhileRunning: pending
-  customerJourney: pending
-  credentialRenewal: pending
+  customerJourney: passed-2026-11-26
+  credentialRenewal: passed-2026-11-26
   upgradeIdentityPersistence: pending
   secretRotation: pending
-  downUpKeepsData: pending
+  downUpKeepsData: passed-2026-11-26
   ownDomainWithTls: pending
   backupRestoreReconciliation: pending
   rollback: pending

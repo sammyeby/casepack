@@ -32,16 +32,16 @@ constraints:
   smtpRequiredForInvitations: true
 verification:
   # Every item reruns on this set before it is marked passed. Final QA, 2026-11-27, bundle
-  # 962eac0, staging licensing 0.36.0: QA run 4 (enrolled) upgraded 0.35.1 -> 0.36.0 and
-  # passed the journey, renewal and down/up; QA run 7 was a fresh install to SETUP.
-  # Enrollment while running needs a free staging slot (both are taken), and secret
-  # rotation wasn't rerun on this set.
-  cleanInstall: passed-2026-11-27
+  # 6562072 (API 0.37.0, SPA 0.36.0, the realm password policy), staging licensing 0.36.0:
+  # QA run 4 (enrolled) upgraded 0.36.0 -> 0.37.0 and passed the journey, renewal, down/up
+  # and secret rotation. A fresh install, enrolled while running, also proves the realm's
+  # password policy (imported on first start only); it needs a free staging slot.
+  cleanInstall: pending
   enrollmentWhileRunning: pending
   customerJourney: passed-2026-11-27
   credentialRenewal: passed-2026-11-27
-  upgradeIdentityPersistence: passed-2026-11-27 # 0.35.1 -> 0.36.0
-  secretRotation: passed-2026-11-27 # run 4 on 962eac0: Keycloak regenerate + new S3 keys, old ones refused, journey 13/13
+  upgradeIdentityPersistence: passed-2026-11-27 # 0.36.0 -> 0.37.0
+  secretRotation: passed-2026-11-27 # Keycloak regenerate + new S3 keys: old ones refused, journey 13/13
   downUpKeepsData: passed-2026-11-27
   ownDomainWithTls: pending
   backupRestoreReconciliation: pending

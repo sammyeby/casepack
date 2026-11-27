@@ -2,7 +2,7 @@ schemaVersion: 1
 status: preview
 profile: compose-podman-single-api
 releases:
-  casepackApi: 0.35.1
+  casepackApi: 0.36.0
   casepackSpa: 0.35.0
   connectedProtocol: v1
 # The images this bundle runs. Keycloak 26.8.2 and PostgreSQL 17.12 are sammyeby/images
@@ -11,7 +11,7 @@ releases:
 # (Chromium; no fixed release yet; internal only). Keycloak has 8 high in Debian 13
 # libexpat and libuuid with no fix released.
 images:
-  - ghcr.io/sammyeby/casepack-api:0.35.1
+  - ghcr.io/sammyeby/casepack-api:0.36.0
   - ghcr.io/sammyeby/casepack-spa:0.35.0
   - ghcr.io/sammyeby/keycloak:26.8.2-optimized
   - ghcr.io/sammyeby/keycloak-themes:0.5.0
@@ -21,7 +21,7 @@ images:
   - gotenberg/gotenberg:8-chromium
   - docker.io/curlimages/curl:8.23.0
 licensing:
-  testedAgainst: staging (licensing 0.35.0)
+  testedAgainst: staging (licensing 0.36.0)
 constraints:
   apiReplicas: 1
   deploymentSlots:

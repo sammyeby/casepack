@@ -153,7 +153,7 @@ Connected licensing and bootstrap variables are configured before enrollment:
 | `LICENSING_API_URL` | Single HTTPS Connected licensing origin (default: `https://licensing.samuelumeh.com`) |
 | `CASEPACK_SELF_HOST_BOOTSTRAP_ENABLED` | Enables idempotent first-run customer/tenant/admin bootstrap |
 | `CASEPACK_SELF_HOST_BOOTSTRAP_ADMIN_EMAIL` | First local CasePack admin email |
-| `CASEPACK_SELF_HOST_BOOTSTRAP_ADMIN_INITIAL_PASSWORD` | One-time temporary password; rotate after first login |
+| `CASEPACK_SELF_HOST_BOOTSTRAP_ADMIN_INITIAL_PASSWORD` | One-time temporary password; generate it (`openssl rand -base64 18`). The realm requires at least 12 characters, not the username or email, for every password. You choose a new one at first sign-in |
 
 See [.env.example](.env.example) for the full template.
 

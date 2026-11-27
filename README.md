@@ -105,7 +105,7 @@ preview does not claim air-gapped operation.
 | `KC_DB_PASS` | Yes | Keycloak database password |
 | `KC_ADMIN_PASS` | Yes | Keycloak admin password |
 | `KEYCLOAK_ADMIN_PORT` / `KEYCLOAK_ADMIN_URL` | No | Admin console port on `127.0.0.1` and its URL (default: `8082`, `http://localhost:8082`) |
-| `CASEPACK_API_VERSION` | No | API image tag (default: `0.36.0`) |
+| `CASEPACK_API_VERSION` | No | API image tag (default: `0.37.0`) |
 | `CORS_ORIGINS` | No | Allowed CORS origins (default: `http://localhost:3000`) |
 | `CASEPACK_RATE_LIMIT_GLOBAL` | No | API requests per minute per client IP (default: `1200`; all users behind one NAT or proxy share it) |
 | `OIDC_ISSUER_URI` | No | Override for external Keycloak |
@@ -153,7 +153,7 @@ Connected licensing and bootstrap variables are configured before enrollment:
 | `LICENSING_API_URL` | Single HTTPS Connected licensing origin (default: `https://licensing.samuelumeh.com`) |
 | `CASEPACK_SELF_HOST_BOOTSTRAP_ENABLED` | Enables idempotent first-run customer/tenant/admin bootstrap |
 | `CASEPACK_SELF_HOST_BOOTSTRAP_ADMIN_EMAIL` | First local CasePack admin email |
-| `CASEPACK_SELF_HOST_BOOTSTRAP_ADMIN_INITIAL_PASSWORD` | One-time temporary password; rotate after first login |
+| `CASEPACK_SELF_HOST_BOOTSTRAP_ADMIN_INITIAL_PASSWORD` | One-time temporary password; generate it (`openssl rand -base64 18`). The realm requires at least 12 characters, not the username or email, for every password. You choose a new one at first sign-in |
 
 See [.env.example](.env.example) for the full template.
 

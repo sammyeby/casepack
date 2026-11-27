@@ -105,7 +105,7 @@ preview does not claim air-gapped operation.
 | `KC_DB_PASS` | Yes | Keycloak database password |
 | `KC_ADMIN_PASS` | Yes | Keycloak admin password |
 | `KEYCLOAK_ADMIN_PORT` / `KEYCLOAK_ADMIN_URL` | No | Admin console port on `127.0.0.1` and its URL (default: `8082`, `http://localhost:8082`) |
-| `CASEPACK_API_VERSION` | No | API image tag (default: `0.35.1`) |
+| `CASEPACK_API_VERSION` | No | API image tag (default: `0.36.0`) |
 | `CORS_ORIGINS` | No | Allowed CORS origins (default: `http://localhost:3000`) |
 | `CASEPACK_RATE_LIMIT_GLOBAL` | No | API requests per minute per client IP (default: `1200`; all users behind one NAT or proxy share it) |
 | `OIDC_ISSUER_URI` | No | Override for external Keycloak |

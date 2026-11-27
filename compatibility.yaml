@@ -2,23 +2,26 @@ schemaVersion: 1
 status: preview
 profile: compose-podman-single-api
 releases:
-  casepackApi: 0.35.1
+  casepackApi: 0.36.0
   casepackSpa: 0.35.0
   connectedProtocol: v1
 # The images this bundle runs. Keycloak 26.8.2 and PostgreSQL 17.12 are sammyeby/images
-# 5295aa7 (Trivy: 0 critical); keycloak-edge is the public sign-in entry point.
+# 5295aa7; keycloak-edge (official nginx, run as uid 101) is the public sign-in entry point.
+# Trivy, 2026-11-27 (HIGH and CRITICAL): 0 critical in every image except gotenberg
+# (Chromium; no fixed release yet; internal only). Keycloak has 8 high in Debian 13
+# libexpat and libuuid with no fix released.
 images:
-  - ghcr.io/sammyeby/casepack-api:0.35.1
+  - ghcr.io/sammyeby/casepack-api:0.36.0
   - ghcr.io/sammyeby/casepack-spa:0.35.0
   - ghcr.io/sammyeby/keycloak:26.8.2-optimized
   - ghcr.io/sammyeby/keycloak-themes:0.5.0
   - ghcr.io/sammyeby/postgresql:17.12-alpine
-  - docker.io/nginxinc/nginx-unprivileged:1.30.6-alpine
-  - chrislusf/seaweedfs:4.53
+  - docker.io/library/nginx:1.30.8-alpine
+  - chrislusf/seaweedfs:4.55
   - gotenberg/gotenberg:8-chromium
-  - docker.io/curlimages/curl:8.16.0
+  - docker.io/curlimages/curl:8.23.0
 licensing:
-  testedAgainst: staging (licensing 0.35.0)
+  testedAgainst: staging (licensing 0.36.0)
 constraints:
   apiReplicas: 1
   deploymentSlots:
@@ -28,17 +31,18 @@ constraints:
   statePath: /var/lib/casepack/licensing
   smtpRequiredForInvitations: true
 verification:
-  # Security fixes of 2026-11-26 (new Keycloak and PostgreSQL, keycloak-edge, no DB port):
-  # every item reruns on this set before it is marked passed. QA run 4 (enrolled, bundle
-  # 6dc40c9) passed the journey, down/up and renewal; the rest rerun in the final QA of
-  # the next API release.
-  cleanInstall: pending
+  # Every item reruns on this set before it is marked passed. Final QA, 2026-11-27, bundle
+  # 962eac0, staging licensing 0.36.0: QA run 4 (enrolled) upgraded 0.35.1 -> 0.36.0 and
+  # passed the journey, renewal and down/up; QA run 7 was a fresh install to SETUP.
+  # Enrollment while running needs a free staging slot (both are taken), and secret
+  # rotation wasn't rerun on this set.
+  cleanInstall: passed-2026-11-27
   enrollmentWhileRunning: pending
-  customerJourney: passed-2026-11-26
-  credentialRenewal: passed-2026-11-26
-  upgradeIdentityPersistence: pending
+  customerJourney: passed-2026-11-27
+  credentialRenewal: passed-2026-11-27
+  upgradeIdentityPersistence: passed-2026-11-27 # 0.35.1 -> 0.36.0
   secretRotation: pending
-  downUpKeepsData: passed-2026-11-26
+  downUpKeepsData: passed-2026-11-27
   ownDomainWithTls: pending
   backupRestoreReconciliation: pending
   rollback: pending

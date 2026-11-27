@@ -31,17 +31,18 @@ constraints:
   statePath: /var/lib/casepack/licensing
   smtpRequiredForInvitations: true
 verification:
-  # Security fixes of 2026-11-26 (new Keycloak and PostgreSQL, keycloak-edge, no DB port):
-  # every item reruns on this set before it is marked passed. QA run 4 (enrolled, bundle
-  # 6dc40c9) passed the journey, down/up and renewal; the rest rerun in the final QA of
-  # the next API release.
-  cleanInstall: pending
+  # Every item reruns on this set before it is marked passed. Final QA, 2026-11-27, bundle
+  # 962eac0, staging licensing 0.36.0: QA run 4 (enrolled) upgraded 0.35.1 -> 0.36.0 and
+  # passed the journey, renewal and down/up; QA run 7 was a fresh install to SETUP.
+  # Enrollment while running needs a free staging slot (both are taken), and secret
+  # rotation wasn't rerun on this set.
+  cleanInstall: passed-2026-11-27
   enrollmentWhileRunning: pending
-  customerJourney: passed-2026-11-26
-  credentialRenewal: passed-2026-11-26
-  upgradeIdentityPersistence: pending
+  customerJourney: passed-2026-11-27
+  credentialRenewal: passed-2026-11-27
+  upgradeIdentityPersistence: passed-2026-11-27 # 0.35.1 -> 0.36.0
   secretRotation: pending
-  downUpKeepsData: passed-2026-11-26
+  downUpKeepsData: passed-2026-11-27
   ownDomainWithTls: pending
   backupRestoreReconciliation: pending
   rollback: pending
